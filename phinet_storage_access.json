@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "phinet",
+  "private_key_id": "e16309dd9b5ddf9c8ccc799131d7d8aa5d253735",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCXWm7LVTXOQNfI\nLAI5lnLnl3IVRRFAt+7umgg2MfA6wgkiUhuD0Wcc1a6UoJ46NgB35wLMRYh1n4OU\n3Vc1gEYkIVoZ9vbKdE4Q/WmxjY8lCtP6gJdpOO8JR16Gcoyziu7/FaIr16Ye8odx\nb6GlFXlBeCQmIMDAiS8smrLfZqs0WTui6Dq2gkfkRtSvGUT/rGiMRO3OFo2mmSqF\nKpRGhqug6jG/+jovdi9N3CB4eVPu/QgW3M6aBNFaSUQz5rUpMPUGqqkqvX8Hcqsn\nI8oENBug2MCmiy/T5Lifm43fIJZSzVH2Y89sYutHM3Am7yrwSwlZejQIjw1+kz9k\nfkt+GFJNAgMBAAECggEAHf3PB56+dzz1JVbHKBcudMLXWeyiQxNPlttR9j9GDbam\nbbUce63yg026dvwu7nUF+bx+mvDKXhh6T/TeU500CPPM8Wk1NR//2jEFEShubZYs\nNC7oEfM0tr98NSMcy3Uj78sfJBXq9qXzfeBzhQ1wxi7i5uVFnMFyZiHPgSJMmaYo\n8gW/4I+33FPqeqGGR1dt3uOLvt+ay5ssBs8C1bWLh0j+EDD/jhKR6hQWWoe/Hrxg\nyjTvNlXWeVv8EOzXy8APRCOZEM0PC3KaIz7HVGYqKWlvpWPFXxjJ+/YWyWq+yyIE\nKz2rJWodpi9PCkAarpslilZZ3cXeITeN5VCESOHKgQKBgQDL+iMDCuj/s/jAkmdp\nakqbPSIw1CsZXJswmJh0jmuQHs9MQ5iBW3cpgrn4w04mTPfwunFyk5A082gn9oZ+\nUtguNgdKRnYYNy1AzcBY2zkp8NBSSgTwPRmF1i4ABp3qt5NueVQtP7VO/exhK4j/\nfabKnMzlsvdzCahTExWp2qd6wQKBgQC99G8dMJ5jnjzaeJNxVZPZOqVaN4Fi5fDG\npEYAC9aZ0joselIOKdA0fXmSoKLF0N4KK+bck6g7jJIsBYgFEg9EcMwc6j/ayycd\nffeXiZAopTVso9ZG8ctsaYYZ+VJcKo+93xiORdih43tK/xUhvrdxQt0vL4q7miG7\ndmRA0jU2jQKBgGKXY+brlhVKKxkBasSUIL2KPgV19+MJVOWXTFFCKZF+otoM7iDQ\nUfeZfURVOmfe2hTcOUuVMaW2ZQiz6uwSJPWpHbrz9c7clJ33FVqdk7LG+BpeNqbc\nEYMUNCXFDP1PgA5szJgWbA9jQqbxAQXk+QKD6bG44EwVRevplJYF3t/BAoGAOQeW\nBJGAPDBZ3M2ulqw2w1VUJ43ajrKyYzEWwxTKzUvMo2XmFNKA7AFv6pHHzNQ0laEw\norDCJX7Cs+zFNaCCbO3gmh3KJgowKC6Vky191nYjYAagYpRdmqLj3BB6pakxlrPQ\nT4awz4nYjl+fHI6BzMNiXLRNVp2j2wBkgQGbcFECgYA8FG4JB2bjfbd6+vsbp1aB\nSituNNW+VlAlKT3GrIbKAYoRC/zM5aKl8EMxWBK/VBXVWA1cQcaEyGf1JiKwluHo\n6cQfjC0RCU6yoFt5g0M71rd2io7djLcLeUAxRPjBgdaf1ObWqw+07vx764j0yncv\nPIo6u3ezhUR2WDQUEE/kIg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "storage-access@phinet.iam.gserviceaccount.com",
+  "client_id": "102548657007790475819",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/storage-access%40phinet.iam.gserviceaccount.com"
+}
