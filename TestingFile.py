@@ -19,7 +19,7 @@ mnist = tf.keras.datasets.mnist
 #     print(sess.run(v1))
 # var,shp = Sft.SoftCinit()
 """Place holder test"""
-sftc = sft.SoftCinit()
+sftc = sft.RandomInit()
 inp = sftc.neuro_rnd_init()
 #inp = tf.Variable([[3,4,5,6]])
 # t = tf.add(inp,4)

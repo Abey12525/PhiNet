@@ -1,13 +1,15 @@
 import tensorflow as tf
 import numpy as np
-import InitRand
+import InitRand as inr
 
 
 #the input
 #include a discount factor
 #[Accuracy ,predicted_structure(number of layers,number of neurons)]
 
-
+Avar = inr.RandomInit()
+rew =Avar.rnn_reward_rnd_init()
+print(rew)
 
 
 

@@ -9,8 +9,13 @@ import numpy as np
 import tensorflow as tf
 import random as rnd
 
+class normal():
+    def norm(self,In_x):
+        #normalizing value to -5 to 5
+        return ((In_x)*0.1)-5.0
 
-class SoftCinit():
+
+class RandomInit(normal):
     def __init__(self):
         self.n = rnd.randint(15, 25)
         print("-----------------------------------------")
@@ -37,11 +42,40 @@ class SoftCinit():
         return self.vlist,self.No_of_neurons
 
     def rnn_reward_rnd_init(self):
+        """reward is normalized -5 to 5
+        the accuracy will be between 0% to 100%
+        normalization equation == X' = (b-a) X  - minX + a
+                                            ----------
+                                            maxX - minX
+        """
+        reward = tf.get_variable("reward",initializer = tf.random_uniform([1],0,100))
+        with tf.Session() as sess:
+            sess.run(tf.global_variables_initializer())
+            re=sess.run(reward)
+            re = normal.norm(re)
+            return re
 
 
 
 
 
+"""
+class MyClass(object):
+    @staticmethod
+    def the_static_method(x):
+        print x
+
+MyClass.the_static_method(2) # outputs 2
+"""
+"""
+sess = tf.InteractiveSession()
+a = tf.constant(5.0)
+b = tf.constant(6.0)
+c = a * b
+# We can just use 'c.eval()' without passing 'sess'
+print(c.eval())
+sess.close()
+"""
 #v = SoftCinit()
 #lst,shp= v.rnd_init()
 #print(lst)

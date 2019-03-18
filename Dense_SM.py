@@ -41,7 +41,7 @@ class Dense():
                     print("#############################################################")
 
 if __name__ == "__main__":
-    Dynamic = InitRand.SoftCinit()
+    Dynamic = InitRand.RandomInit()
     # function for variable generation
     Varr,Neuron_number = Dynamic.neuro_rnd_init()
     # tf.reset_default_graph()
