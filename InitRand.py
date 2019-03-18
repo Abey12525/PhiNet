@@ -17,7 +17,7 @@ class SoftCinit():
         print("Softmax layer random generation initiated")
         print("-----------------------------------------")
 
-    def rnd_init(self):
+    def neuro_rnd_init(self):
         self.vlist = []
         self.No_of_neurons = 0
         #vars()["b"]=tf.get_variable("b",shape=[self.n],initializer=tf.contrib.layers.xavier_initializer())
@@ -35,6 +35,9 @@ class SoftCinit():
             tmp = eval(str_v)
             self.vlist.append([tmp,self.init_shape])
         return self.vlist,self.No_of_neurons
+
+    def rnn_reward_rnd_init(self):
+
 
 
 

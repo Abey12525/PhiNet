@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-import SoftC as sft
+import InitRand as sft
 import matplotlib.pyplot as plt
 mnist = tf.keras.datasets.mnist
 (train_x,train_y),(test_x,test_y) = mnist.load_data()
@@ -20,7 +20,7 @@ mnist = tf.keras.datasets.mnist
 # var,shp = Sft.SoftCinit()
 """Place holder test"""
 sftc = sft.SoftCinit()
-inp = sftc.rnd_init()
+inp = sftc.neuro_rnd_init()
 #inp = tf.Variable([[3,4,5,6]])
 # t = tf.add(inp,4)
 #inp = tf.get_variable("v1", shape=[1], initializer=tf.contrib.layers.xavier_initializer())

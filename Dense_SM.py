@@ -1,4 +1,4 @@
-import SoftC
+import InitRand
 import tensorflow as tf
 import numpy as np
 """
@@ -41,9 +41,9 @@ class Dense():
                     print("#############################################################")
 
 if __name__ == "__main__":
-    Dynamic = SoftC.SoftCinit()
+    Dynamic = InitRand.SoftCinit()
     # function for variable generation
-    Varr,Neuron_number = Dynamic.rnd_init()
+    Varr,Neuron_number = Dynamic.neuro_rnd_init()
     # tf.reset_default_graph()
     SoftNet = Dense()
     SoftNet.Soft_train(Varr,Neuron_number)
