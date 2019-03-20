@@ -45,5 +45,6 @@ if __name__ == "__main__":
     # function for variable generation
     Varr,Neuron_number = Dynamic.neuro_rnd_init()
     # tf.reset_default_graph()
+    Neuron_number = np.sum(Neuron_number)
     SoftNet = Dense()
     SoftNet.Soft_train(Varr,Neuron_number)

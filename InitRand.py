@@ -17,18 +17,18 @@ class normal():
 
 class RandomInit(normal):
     def __init__(self):
-        self.n = rnd.randint(15, 25)
         print("-----------------------------------------")
-        print("Softmax layer random generation initiated")
+        print("###### random generation initiated ######")
         print("-----------------------------------------")
 
-    def neuro_rnd_init(self):
+    def neuro_rnd_init(self,rand_num):
         self.vlist = []
-        self.No_of_neurons = 0
+        self.No_of_neurons = []
+        self.n = rand_num
         #vars()["b"]=tf.get_variable("b",shape=[self.n],initializer=tf.contrib.layers.xavier_initializer())
         for i in range(self.n):
             self.init_shape = rnd.randint(256, 1024)
-            self.No_of_neurons +=self.init_shape
+            self.No_of_neurons.append(self.init_shape)
             #initializing variables with ordered name ie. v1,v2,...vn
             ##vars()["v".format(i)] is used so that a variable
             ##name can be declared with in the loop
@@ -52,7 +52,7 @@ class RandomInit(normal):
         with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())
             re=sess.run(reward)
-            re = normal.norm(re)
+            re = self.norm(re)
             return re
 
 

@@ -9,7 +9,10 @@ import InitRand as inr
 
 Avar = inr.RandomInit()
 rew =Avar.rnn_reward_rnd_init()
-print(rew)
+rnn_inp
+
+with tf.Session as sess:
+
 
 
 
