@@ -48,13 +48,11 @@ class RandomInit(normal):
                                             ----------
                                             maxX - minX
         """
-        reward = tf.get_variable("reward",initializer = tf.random_uniform([1],0,100))
-        with tf.Session() as sess:
-            sess.run(tf.global_variables_initializer())
-            re=sess.run(reward)
-            re = self.norm(re)
-            return re
-
+        with tf.variable_scope("rnn_reward_rnd_init", reuse=tf.AUTO_REUSE):
+            reward = tf.get_variable("reward3",initializer = tf.random_uniform([1],0,100))
+            re = self.norm(reward)
+        print(re)
+        return re
 
 
 
