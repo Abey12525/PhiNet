@@ -17,9 +17,9 @@ class normal():
 
 class RandomInit(normal):
     def __init__(self):
-        print("-----------------------------------------")
-        print("###### random generation initiated ######")
-        print("-----------------------------------------")
+        print("----------------------------------------------------")
+        print("###### random generation initiated version 2.0######")
+        print("----------------------------------------------------")
 
     def neuro_rnd_init(self,rand_num):
         self.vlist = []
@@ -32,11 +32,11 @@ class RandomInit(normal):
             #initializing variables with ordered name ie. v1,v2,...vn
             ##vars()["v".format(i)] is used so that a variable
             ##name can be declared with in the loop
-            vars()["v{}".format(i)] = tf.get_variable("v{}".format(i), shape=[self.init_shape],
+            vars()["vt{}".format(i)] = tf.get_variable("vt{}".format(i), shape=[self.init_shape],
                                                       initializer=tf.contrib.layers.xavier_initializer())
             #geting the variable by the string name so that it is automaticaly
             #appended to the list of dynamicaly created variables
-            str_v ="v{}".format(i)
+            str_v ="vt{}".format(i)
             tmp = eval(str_v)
             self.vlist.append([tmp,self.init_shape])
         return self.vlist,self.No_of_neurons
@@ -48,11 +48,12 @@ class RandomInit(normal):
                                             ----------
                                             maxX - minX
         """
-        with tf.variable_scope("rnn_reward_rnd_init", reuse=tf.AUTO_REUSE):
-            reward = tf.get_variable("reward3",initializer = tf.random_uniform([1],0,100))
-            re = self.norm(reward)
-        print(re)
-        return re
+        # with tf.variable_scope("rnn_reward_rnd_init", reuse=tf.AUTO_REUSE):
+        #     reward = tf.get_variable("reward3",initializer = tf.random_uniform([1],0,100))
+        #     re = self.norm(reward)
+        # print(re)
+        reward = np.random.randint(50, 100)
+        return self.norm(reward)
 
 
 
