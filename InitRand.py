@@ -32,11 +32,11 @@ class RandomInit(normal):
             #initializing variables with ordered name ie. v1,v2,...vn
             ##vars()["v".format(i)] is used so that a variable
             ##name can be declared with in the loop
-            vars()["vt{}".format(i)] = tf.get_variable("vt{}".format(i), shape=[self.init_shape],
+            vars()["vt9{}".format(i)] = tf.get_variable("vt9{}".format(i), shape=[self.init_shape],
                                                       initializer=tf.contrib.layers.xavier_initializer())
             #geting the variable by the string name so that it is automaticaly
             #appended to the list of dynamicaly created variables
-            str_v ="vt{}".format(i)
+            str_v ="vt9{}".format(i)
             tmp = eval(str_v)
             self.vlist.append([tmp,self.init_shape])
         return self.vlist,self.No_of_neurons
