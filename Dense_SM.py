@@ -37,13 +37,24 @@ class Dense():
                     for i in range(iteration):
                         result_weight = sess.run(model, feed_dict={x: [[elem]]})
         print("training_complete !")
+        return result_weight
 
 
 if __name__ == "__main__":
+    try:
+        layers = np.load('./layers.npy')
+        Neurons = np.load('./neurons.npy')
+        print(layers)
+        print(Neurons)
+    except:
+        print("Error reading File --- !!!!")
+
+
     Dynamic = InitRand.RandomInit()
     # function for variable generation
     Varr,Neuron_number = Dynamic.neuro_rnd_init(20)
     # tf.reset_default_graph()
     Neuron_number = np.sum(Neuron_number)
     SoftNet = Dense()
-    SoftNet.Soft_train(Varr,Neuron_number)
+    Connections = SoftNet.Soft_train(Varr,Neuron_number)
+    print(Connections)
