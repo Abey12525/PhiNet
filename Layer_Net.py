@@ -22,26 +22,37 @@ __init__(
 
 class Layer():
     def __init__(self,inp_x,shape):
-        self.inp_x = inp_x
+        self.inp = inp_x #-->  reward + action
+        #self.state = inp_x[:-1]
         self.shape = shape
 
-    def Model(self):
+    def Model(self,discount_factor=0.8,learning_rate=0.001):
         x = tf.placeholder(dtype=tf.float32,shape =[None,1,self.shape])
-        Culstm = tf.contrib.cudnn_rnn.CudnnLSTM(25,10)
+        linear_layer0 = tf.get_variable("wl0",shape=[1,5],initializer=tf.contrib.layers.xavier_initializer())
+        linear_layer = tf.get_variable("wl1",shape=[5,1],initializer=tf.contrib.layers.xavier_initializer())
+        linear_bias0 = tf.get_variable("bl0",shape = [5],initializer = tf.random_uniform_initializer(2,10))
+        linear_bias = tf.get_variable("bl",shape = [1],initializer = tf.random_uniform_initializer(2,10))
+
+        Culstm = tf.contrib.cudnn_rnn.CudnnLSTM(6,self.shape)
         output1, state1 = Culstm(x,initial_state = None,training = True)
-        Culstm1 = tf.contrib.cudnn_rnn.CudnnLSTM(15,10)
+        Culstm1 = tf.contrib.cudnn_rnn.CudnnLSTM(6,self.shape+4)
         output2,state2 = Culstm1(output1,initial_state = state1,training = True)
-        Culstm2 = tf.contrib.cudnn_rnn.CudnnLSTM(10,5)
+        Culstm2 = tf.contrib.cudnn_rnn.CudnnLSTM(6,self.shape+4)
         output3,state3 = Culstm2(output2,initial_state = state2, training = True)
-        Culstm3 = tf.contrib.cudnn_rnn.CudnnLSTM(20,1)
-        output4,state4 = Culstm3(output3,initial_state = None, training = True)
+        Culstm3 = tf.contrib.cudnn_rnn.CudnnLSTM(6,self.shape-2)
+        output4,state4 = Culstm3(output3,initial_state = state3, training = True)
+        linear = tf.add(tf.matmul(tf.transpose(output4[-1]),linear_layer0),linear_bias0)
+        output = tf.argmax(tf.add(tf.matmul(linear,linear_layer),linear_bias))
+
+        #optimizer = tf.train.GradientDescentOptimizer(output).minimize(-self.reward)
         init = tf.global_variables_initializer()
         with tf.Session() as sess:
             timestr = time.strftime("%Y%m%d-%H%M%S")
             Writer = tf.summary.FileWriter(logdir='./graphs/G{}/'.format(timestr), graph=sess.graph)
             sess.run(init)
-            output,state = sess.run([output4, state4],feed_dict={x : self.inp_x})
-        return output,state
+            output = sess.run(output,feed_dict={x : self.inp})
+            print(output)
+        return output
 
 
 # with tf.variable_scope(reuse=tf.AUTO_REUSE):
@@ -65,6 +76,8 @@ if __name__=='__main__':
     neuron_num = np.array(neuron_num)
     #tf.set_random_seed(10)
     shape = neuron_num.shape[0]
+    print(neuron_num)
+    print(shape)
     """
     initializing the lstm model
     passing neuron_num as 3D array since CudnnLSTM is time major  
@@ -72,6 +85,6 @@ if __name__=='__main__':
     lstm = Layer([[neuron_num]],shape)
     # lstm_output   - Output of the Model
     # lstm_state    - State of the Model
-    lstm_output,lstm_state = lstm.Model()
+    lstm_output=np.round(lstm.Model())
     np.save('./layers',lstm_output)
     print(lstm_output)
