@@ -16,24 +16,37 @@ import numpy as np
 #     var_list.append(x)
 #     return var_list,rw_list
 
-def Model(data,rw):
-    x = tf.placeholder(dtype = tf.float32, shape=[None,1,1])
-    model = tf.contrib.cudnn_rnn.CudnnLSTM(10,5)
-    out,state = model(x,initial_state = None, training = True)
-    rw = tf.Variable([-5],dtype=tf.float32)
-    opt = tf.train.GradientDescentOptimizer(out).minimize(rw)
-    init = tf.global_variables_initializer()
-    with tf.Session() as sess:
-        sess.run(init)
-        for i in range(100):
-            x = sess.run(opt,feed_dict={x : [[[data]]]})
-            if(i%25 == 0):
-                print("optimizing : ",x)
+# def Model(data,rw):
+#     x = tf.placeholder(dtype = tf.float32, shape=[None,1,1])
+#     model = tf.contrib.cudnn_rnn.CudnnLSTM(10,5)
+#     out,state = model(x,initial_state = None, training = True)
+#     rw = tf.Variable([-5],dtype=tf.float32)
+#     opt = tf.train.GradientDescentOptimizer(out).minimize(rw)
+#     init = tf.global_variables_initializer()
+#     with tf.Session() as sess:
+#         sess.run(init)
+#         for i in range(100):
+#             x = sess.run(opt,feed_dict={x : [[[data]]]})
+#             if(i%25 == 0):
+#                 print("optimizing : ",x)
 
 
+from tensorflow.keras.datasets import mnist
+(train_x,train_y),(test_x,test_y) = mnist.load_data()
 
-#rw = [[[0],[4],[5],[-5]]]
-Model([[[3,5,2,7],[4,5,6,8],[1,9,2,5],[4,6,8,7]]],rw)
+x = tf.shape(train_x)
+with tf.Session() as sess:
+    x = sess.run(x)
+    y = []
+    z = x[1:].astype(int)
+    z = z[:]
+    y.append(None)
+    for j in z:
+        print(j)
+        y.append(j)
+
+# rw = [[[0],[4],[5],[-5]]]
+# Model([[[3,5,2,7],[4,5,6,8],[1,9,2,5],[4,6,8,7]]],rw)
 
 
 #

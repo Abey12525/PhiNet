@@ -47,6 +47,8 @@ class Dense():
         init = tf.global_variables_initializer()
         # tf.summary.scalar("cost",cost)
         # merge_summary_op  = tf.summary.merge_all()
+        print("Training")
+        sys.stdout.write("||")
         with tf.Session() as sess:
             writer = tf.summary.FileWriter(logdir='./dense_graph',
                                                graph=sess.graph)
@@ -56,11 +58,12 @@ class Dense():
                     layer_out_connection  = sess.run(model, feed_dict={x: [[elem]]})
                     mean = np.divide(np.sum(layer_out_connection),output_layer)
                     layer_out_connection = np.where(layer_out_connection >=(mean+(mean*0.04)),1,0)
-                    layer_out_connection = np.argwhere(layer_out_connection==1)
-                    connection_matrix.append(layer_out_connection)
+                    connection_matrix.append(layer_out_connection[0])
                     if(elem%200==0):
-                        print(len(layer_out_connection))
-        print("training_complete !")
+                        sys.stdout.write("#")
+                        sys.stdout.flush()
+        print("||\ntraining_complete !")
+        print(np.shape(connection_matrix))
         return connection_matrix
 
 
