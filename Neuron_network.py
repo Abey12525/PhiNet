@@ -1,8 +1,10 @@
 import tensorflow as tf
 import numpy as np
+import Layer_Net as LNet
 
 class Neurons():
     def __init__(self,Layers):
+        Lyr = LNet.run()
         self.Layers = Layers
         #random init of neurons per layer
         self.inp = np.random.uniform(low=200,high=1000,size = (1,1,self.Layers))
@@ -30,15 +32,24 @@ class Neurons():
             sess.run(init)
             output = sess.run(output,feed_dict={x : self.inp})
         return output
+    def run(self):
+        try:
+            foo = np.load('./layers.npy')
+            print(foo)
+        except:
+            print("File not Found -- !!")
+        Neu = Neurons(int(foo))
+        out = Neu.Model()
+        np.save('./neurons', out)
+        print(out)
 
-
-if __name__ == '__main__':
-    try:
-        foo = np.load('./layers.npy')
-        print(foo)
-    except:
-        print("File not Found -- !!")
-    Neu = Neurons(int(foo))
-    out = Neu.Model()
-    np.save('./neurons',out)
-    print(out)
+# if __name__ == '__main__':
+#     try:
+#         foo = np.load('./layers.npy')
+#         print(foo)
+#     except:
+#         print("File not Found -- !!")
+#     Neu = Neurons(int(foo))
+#     out = Neu.Model()
+#     np.save('./neurons',out)
+#     print(out)

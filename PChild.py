@@ -13,7 +13,7 @@ from tensorflow.keras.datasets import mnist
     7.output layer - N/A
 """
 class PChild():
-    def __init__(self):
+    def __init__(self,train_x,train_y=None):
         try :
             self.neurons = np.load('./neurons.npy')
             self.neurons = self.neurons.astype(int)
@@ -25,17 +25,56 @@ class PChild():
             self.neuron_mask = self.neuron_mask.astype(int)
         except:
             print("Structure Files not Found")
+
+        self.iteration = iteration
+        self.train_x = train_x
+        self.shape_x = []
+        self.tmp_shp_x = tf.shape(train_x)
+        if train_y.any():
+            self.shape_y = []
+            self.tmp_shp_y = tf.shape(train_y)
+            with tf.Session() as sess:
+                out_y = sess.run(self.tmp_shp_y)
+                out_y = out_y[1:]
+                self.shape_y.append(None)
+                for j in out_y:
+                    self.shape_y.append(j)
+                print(self.shape_y)
+                out = sess.run(self.tmp_shp_x)
+                out = out[1:]
+                self.shape_x.append(None)
+                for x in out:
+                    self.shape_x.append(x)
+                print(self.shape_x)
+                self.x_inp,self.y_inp =  tf.placeholder(tf.float32, self.shape_x), tf.placeholder(tf.float32, self.shape_y)
+        else:
+            print("Unsupervised learning is Currently not supported!!")
+            with tf.Session() as sess:
+                out = sess.run(self.tmp_shp_x)
+                self.shape_x.append(None)
+                for x in out:
+                    self.shape_x.append(x)
+                print(self.shape_x)
+                self.x_inp = tf.placeholder(tf.float32, self.shape_x)
         weights = []
         layers = []
         bias = []
         mask = []
         count = 0
         tf.reset_default_graph()
+        # Input layer and Input weights
+        Linp = tf.get_variables("Linp",shape = [self.shape_x],initializer = tf.zero_initializer())
+        layers.append(Linp)
+        Winp = tf.get_variables("Winp",shape = [self.shape_x,self.neurons[0]],
+                                initializer = tf.contrib.layers.xavier_initializer())
+        weights.append(Winp)
         for i, Neurons in enumerate(self.neurons):
             vars()["w{}".format(i)] = tf.get_variable("W{}".format(i), shape=[self.neuron_num,Neurons],
                                                       initializer=tf.contrib.layers.xavier_initializer())
-            vars()["b{}".format(i)] = tf.get_variable("b{}".format(i), shape=[1],initializer = tf.contrib.layers.xavier_initializer())
-            vars()["L{}".format(i)] = tf.get_variable("L{}".format(i),shape = [Neurons], initializer= tf.zeros_initializer())
+            vars()["b{}".format(i)] = tf.get_variable("b{}".format(i), shape=[1],
+                                                      initializer = tf.contrib.layers.xavier_initializer())
+            vars()["L{}".format(i)] = tf.get_variable("L{}".format(i),shape = [Neurons],
+                                                      initializer= tf.zeros_initializer())
             vars()["wm{}".format(i)] = self.neuron_mask[count:count+Neurons]
             count += Neurons
             W_str = "w{}".format(i)
@@ -50,6 +89,11 @@ class PChild():
             layers.append(L_tmp)
             bias.append(B_tmp)
             mask.append(WM_tmp)
+        Lout = tf.get_variable("Lout", shape = [self.shape_y],initializer = tf.zeros_initializer())
+        layers.append(Lout)
+        Wout = tf.get_variable("Wout", shape = [self.neurons[-1],self.shape_y],
+                               initializer = tf.contrib.layers.xavier_initializer())
+        weights.append(Wout)
         print("WEIGHTS")
         print(weights)
         print("LAYERS")
@@ -58,43 +102,29 @@ class PChild():
         print(bias)
         print("MASK")
         print(mask)
-        self.weights = weights
-        self.layers = layers
-        self.bias = bias
+        init = tf.global_variables_initializer()
+        with tf.Session() as sess:
+            sess.run(init)
+            self.weights = sess.run(weights)
+            self.layers = sess.run(layers)
+            self.bias = sess.run(bias)
         self.mask = mask
 
-    def fit(self,train_x,train_y = None):
-        self.train_x = train_x
-        self.shape_x = []
-        self.tmp_shp_x = tf.shape(train_x)
-        if train_y.any():
-            self.shape_y = []
-            self.tmp_shp_y=tf.shape(train_y)
-            with tf.Session() as sess:
-                out_y = sess.run(self.tmp_shp_y)
-                print(out_y)
-                self.shape_y.append(None)
-                for j in out_y:
-                    self.shape_y.append(j)
-                print(self.shape_y)
-                out = sess.run(self.tmp_shp_x)
-                out = out[1:]
-                self.shape_x.append(None)
-                for x in out:
-                    self.shape_x.append(x)
-                print(self.shape_x)
-                return tf.placeholder(tf.float32,self.shape_x), tf.placeholder(tf.float32,self.shape_y)
-        else:
-            with tf.Session() as sess:
-                out = sess.run(self.tmp_shp_x)
-                self.shape_x.append(None)
-                for x in out:
-                    self.shape_x.append(x)
-                print(self.shape_x)
-                return tf.placeholder(tf.float32,self.shape_x)
 
 
-    def model(self):
+    def model(self,iteration):
+        self.iteration = iteration
+        with tf.Session() as sess:
+            for i in range(self.iteration):
+                model = tf.add(tf.matmul(self.inp_x,weights[0]),self.bias[0])
+                for w,b,l,m in zip(self.weights,self.bias,self.layers,self.mask):
+                    model = tf.add(tf.matmul(tf.matmul(w,m),l),b)
+                    model = tf.nn.linear_activation(model)
+                cost =model - y
+                optimizer = gradiendtdescent(cost)
+        #test_accuracy
+        np.save('./accuracy.npy')
+
 
 
 
@@ -112,6 +142,11 @@ class PChild():
 
 if __name__ == '__main__':
     (train_x,train_y),(test_x,test_y) = mnist.load_data()
-    A = PChild()
-    x,y = A.fit(train_x,train_y)
-    print("test_initialization")
+    x = tf.reshape(train_x,[-1,784])
+    y = tf.one_hot(test_y,depth = 10)
+    with tf.Session() as sess:
+        train_x = sess.run(x)
+        train_y = sess.run(y)
+    child = PChild(train_x,train_y)
+    child.model(iteration = 100)
+    print("Accuracy recorded")
