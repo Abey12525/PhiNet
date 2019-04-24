@@ -76,18 +76,23 @@ class Dense():
             print("Error reading File --- !!!!")
 
         Dynamic = InitRand.RandomInit()
-        # function for variable generation
-        # tf.reset_default_graph()
         Neuron_number = np.sum(Neurons)
         print(Neuron_number)
-        SoftNet = Dense()
         Neurons = Neurons.astype(int)
-        Connections = SoftNet.Soft_train(Neurons, Neuron_number)
+        Connections = self.Soft_train(Neurons, Neuron_number)
         np.save('./mask.npy', Connections)
         print("Save Complete !!")
         
-#
-# if __name__ == "__main__":
+
+if __name__ == "__main__":
+    Ta = Dense()
+    Ta.run()
+    print(" Neuro_connection found ")
+
+
+
+
+
 #     try:
 #         layers = np.load('./layers.npy')
 #         Neurons = np.load('./neurons.npy')
