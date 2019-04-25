@@ -38,10 +38,21 @@ class test:
     #     print("test run")
 
 if __name__ == '__main__':
-    k = test()
-    k.sub()
-
-
+    (train_x,train_y),(test_x,test_y) = tf.keras.datasets.mnist.load_data()
+    train_x,test_x = train_x/255,test_x/255
+    t = train_x[:20]
+    b = tf.get_variable("t",shape=[1],initializer=tf.ones_initializer)
+    c1=tf.Variable([[2,3],[4,5]],dtype=tf.float32)
+    # c2=tf.Variable([[1,2],[2,3]],dtype=tf.float32)
+    # c3=tf.Variable([[4,5]],dtype=tf.float32)
+    # multiply = tf.multiply(c1,c2)
+    # check = tf.multiply(c1,c3)
+    check2 = tf.add(c1,b)
+    init = tf.global_variables_initializer()
+    with tf.Session() as sess:
+        sess.run(init)
+        j = sess.run(check2)
+        print(j)
 
 
 

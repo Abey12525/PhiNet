@@ -5,12 +5,12 @@ from tensorflow.keras.datasets import mnist
 
 """
     1. initial condition of weights - Done 
-        i) masking condition ? - N/A
-    2. weights after first initialization - N/A
-    3. initial condition of layer input x - N/A
+        i) masking condition ? - Done
+    2. weights after first initialization - Done
+    3. initial condition of layer input x - Done
     4. layer after initial condition - N/A 
     5. mask initialization - Done
-    6. mask after initial state -N/A
+    6. mask after initial state -Done
     7.output layer - N/A
 """
 class PChild():
@@ -26,6 +26,7 @@ class PChild():
             self.neurons = self.neurons.astype(int)
             self.neuron_mask = self.neuron_mask.astype(int)
             self.data_len = len(train_x)
+            print("data_length: ",self.data_len)
             sys.stdout.write("Structure file found!!!\n")
             sys.stdout.flush()
         except:
@@ -112,7 +113,7 @@ class PChild():
             self.layers = sess.run(layers)
             self.bias = sess.run(bias)
         self.mask = mask
-        sys.stdout.write("structure initialization complete")
+        sys.stdout.write("structure initialization complete\n")
         sys.stdout.flush()
 
 
@@ -121,37 +122,35 @@ class PChild():
         self.iteration = iteration
         self.batch_size = batch_size
         self.total_batch = self.data_len // self.batch_size
-
+        print("total_batch : ",self.total_batch)
+        print(self.total_batch)
         layer_storage = []
         self.Linp = tf.nn.tanh(tf.add(tf.matmul(self.Winp,self.x_inp), self.Binp))
         for lyr in range(self.no_layers):
-            actual_weights = tf.multiply(self.weights[lyr],self.mask[lyr])
-            #concat all layers into one
-            layer = tf.concat(self.layers,0)
             self.mask[lyr] = tf.cast(self.mask[lyr],dtype = tf.float32)
-            actual_layer = tf.multiply(self.mask[lyr], layer)
-            actual_layer_inp = tf.multiply(actual_weights,actual_layer)
+            actual_weights = tf.multiply(self.weights[lyr],self.mask[lyr])   #correct
+            layer = tf.concat(self.layers,0)   #concat all layers into one
+            actual_layer = tf.multiply(self.mask[lyr], layer)  #correct
+            actual_layer_inp = tf.multiply(actual_weights,actual_layer)#check multiplication
             actual_layer_inp = tf.reduce_sum(actual_layer_inp,1)
-            layer_result = tf.add(actual_layer_inp,self.bias[lyr])
+            layer_result = tf.add(actual_layer_inp,self.bias[lyr]) #correct
             self.layers[lyr] = tf.nn.tanh(layer_result)
-            layer_storage.append(self.layers)
-        #self.Lout = tf.nn.softmax(tf.add(tf.matmul(self.Wout,layer_storage),self.Bout))
-        self.layers = layer_storage
+        # layer_storage.append(self.layers)
+        # self.layers = layer_storage
+        self.Lout = tf.multiply(self.Wout,self.layers[-1])
+        self.Lout = tf.reduce_sum(self.Lout,1)
+        self.Lout = tf.nn.softmax(tf.add(self.Lout,self.Bout))
         with tf.Session() as sess:
             sess.run(self.init)
             for i in range(self.iteration):
                 count = 0
                 for batch in range(self.total_batch):
                     deepinp = self.train_x[count:count+self.batch_size]
-                    count += self.batch_size
-                    l = sess.run(self.layers,feed_dict={self.x_inp : deepinp})
-                    k = l[0][0]
-        sum_test = 0
-        for x in k:
-            sum_test+=1
-        print("testing")
-        print(sum_test)
-        print("test_phase__1")
+                    batch += 1
+                    count +=self.batch_size
+                    final_layer = sess.run(self.Lout,feed_dict={self.x_inp : deepinp})
+                    print(final_layer)
+                    break
 
     def test_accuracy(self):
         #test accuray using the weights saved
