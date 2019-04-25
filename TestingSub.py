@@ -38,22 +38,23 @@ class test:
     #     print("test run")
 
 if __name__ == '__main__':
+    tf.reset_default_graph()
     (train_x,train_y),(test_x,test_y) = tf.keras.datasets.mnist.load_data()
     train_x,test_x = train_x/255,test_x/255
-    t = train_x[:20]
-    b = tf.get_variable("t",shape=[1],initializer=tf.ones_initializer)
-    c1=tf.Variable([[2,3],[4,5]],dtype=tf.float32)
-    # c2=tf.Variable([[1,2],[2,3]],dtype=tf.float32)
-    # c3=tf.Variable([[4,5]],dtype=tf.float32)
-    # multiply = tf.multiply(c1,c2)
-    # check = tf.multiply(c1,c3)
-    check2 = tf.add(c1,b)
+    t = np.reshape(train_x[0], [-1, 784])
+
+    x = tf.placeholder(tf.float32,shape=(None,784))
+    with tf.variable_scope("testing",reuse=tf.AUTO_REUSE):
+        w = tf.get_variable("wi",shape=[784,595],initializer = tf.contrib.layers.xavier_initializer())
+        b = tf.get_variable("tes",shape=[1],initializer=tf.ones_initializer)
+
+    lout = tf.matmul(x,w)
     init = tf.global_variables_initializer()
     with tf.Session() as sess:
         sess.run(init)
-        j = sess.run(check2)
-        print(j)
-
+        k = sess.run(lout,feed_dict={x : t})
+        print(np.shape(k))
+        """(1x784),(784,595)"""
 
 
 

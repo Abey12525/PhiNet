@@ -60,25 +60,16 @@ class test:
         mask_t = tf.cast(self.mask[0],dtype=tf.float32)
         actual_layer = tf.multiply(self.winp,test)
         self.Linp = actual_layer
-        actual_layer = tf.matmul(self.Linp,mask_t)
+        #actual_layer = tf.matmul(self.Linp,mask_t)
 
         init = tf.global_variables_initializer()
         with tf.Session() as sess:
             sess.run(init)
-            y = sess.run(actual_layer)
-            t = sess.run(mask_t)
+            #y = sess.run(actual_layer)
+            #t = sess.run(mask_t)
             tm = sess.run(self.Linp)
-            wi = sess.run(self.winp)
-            print("-----inp_weight----")
-            print(wi.shape)
-            print("----mask-----")
-            print(mask_t.shape)
-            print("-----winp*784----")
-            print(tm.shape)
-            print("----actual_layer-----")
-            print(y.shape)
-            print("the actual_dim ")
-
+            #wi = sess.run(self.winp)
+            print(np.shape(tm))
 if __name__ == '__main__':
     (train_x,train_y),(test_x,test_y) = mnist.load_data()
     t = test(train_x,test_y)

@@ -57,13 +57,14 @@ class PChild():
                 print("y : ",self.y_inp)
         else:
             print("Unsupervised learning is Currently not supported!!")
-            with tf.Session() as sess:
-                out = sess.run(self.tmp_shp_x)
-                self.shape_x.append(None)
-                for x in out:
-                    self.shape_x.append(x)
-                self.x_inp = tf.placeholder(tf.float32, self.shape_x)
-                print("x : ", self.x_inp)
+            exit()
+            # with tf.Session() as sess:
+            #     out = sess.run(self.tmp_shp_x)
+            #     self.shape_x.append(None)
+            #     for x in out:
+            #         self.shape_x.append(x)
+            #     self.x_inp = tf.placeholder(tf.float32, self.shape_x)
+            #     print("x : ", self.x_inp)
 
         sys.stdout.write("placeholder initialized\n")
         sys.stdout.flush()
@@ -76,7 +77,7 @@ class PChild():
 
         # Input layer and Input weights
         self.Linp = tf.get_variable("Linp",shape = out,initializer = tf.ones_initializer)
-        self.Winp = tf.get_variable("Winp",shape = [self.neurons[0],out],
+        self.Winp = tf.get_variable("Winp",shape = [out,self.neurons[0]],
                                     initializer = tf.contrib.layers.xavier_initializer())
         self.Binp = tf.get_variable("Binp",shape = [1], initializer=tf.contrib.layers.xavier_initializer())
 
@@ -103,8 +104,8 @@ class PChild():
             mask.append(WM_tmp)
 
         self.Lout = tf.get_variable("Lout", shape = out_y,initializer = tf.ones_initializer)
-        self.Wout = tf.get_variable("Wout", shape = [out_y,self.neurons[-1]],
-                               initializer = tf.contrib.layers.xavier_initializer())
+        self.Wout = tf.get_variable("Wout", shape = [self.neurons[-1],out_y],
+                                    initializer = tf.contrib.layers.xavier_initializer())
         self.Bout = tf.get_variable("Bout", shape = [1],initializer=tf.contrib.layers.xavier_initializer())
         self.init = tf.global_variables_initializer()
         with tf.Session() as sess:
@@ -123,9 +124,9 @@ class PChild():
         self.batch_size = batch_size
         self.total_batch = self.data_len // self.batch_size
         print("total_batch : ",self.total_batch)
-        print(self.total_batch)
         layer_storage = []
-        self.Linp = tf.nn.tanh(tf.add(tf.matmul(self.Winp,self.x_inp), self.Binp))
+        self.Linp = tf.matmul(self.x_inp,self.Winp)
+        #self.layers[0] = tf.nn.tanh(tf.add(self.Linp, self.Binp))[0]
         for lyr in range(self.no_layers):
             self.mask[lyr] = tf.cast(self.mask[lyr],dtype = tf.float32)
             actual_weights = tf.multiply(self.weights[lyr],self.mask[lyr])   #correct
@@ -133,23 +134,24 @@ class PChild():
             actual_layer = tf.multiply(self.mask[lyr], layer)  #correct
             actual_layer_inp = tf.multiply(actual_weights,actual_layer)#check multiplication
             actual_layer_inp = tf.reduce_sum(actual_layer_inp,1)
+            #layer_storage.append(actual_layer)
             layer_result = tf.add(actual_layer_inp,self.bias[lyr]) #correct
             self.layers[lyr] = tf.nn.tanh(layer_result)
-        # layer_storage.append(self.layers)
-        # self.layers = layer_storage
-        self.Lout = tf.multiply(self.Wout,self.layers[-1])
-        self.Lout = tf.reduce_sum(self.Lout,1)
+        self.Lout = tf.matmul([self.layers[-1]],self.Wout)
         self.Lout = tf.nn.softmax(tf.add(self.Lout,self.Bout))
         with tf.Session() as sess:
             sess.run(self.init)
             for i in range(self.iteration):
                 count = 0
                 for batch in range(self.total_batch):
-                    deepinp = self.train_x[count:count+self.batch_size]
+                    count_lt = count + self.batch_size
+                    for data_idx in range(count,count_lt):
+                        deepinp = sess.run(tf.convert_to_tensor(self.train_x[data_idx]
+                                                                ,dtype=tf.float32))
+                        final_layer = sess.run(t,feed_dict={self.x_inp : [deepinp]})
+                        print(np.shape(final_layer))
+                        break
                     batch += 1
-                    count +=self.batch_size
-                    final_layer = sess.run(self.Lout,feed_dict={self.x_inp : deepinp})
-                    print(final_layer)
                     break
 
     def test_accuracy(self):
@@ -173,10 +175,9 @@ class PChild():
 
 if __name__ == '__main__':
     (train_x,train_y),(test_x,test_y) = mnist.load_data()
-    x = tf.reshape(train_x,[-1,784])
+    train_x = np.reshape(train_x,[-1,784])
     y = tf.one_hot(test_y,depth = 10)
     with tf.Session() as sess:
-        train_x = sess.run(x)
         train_y = sess.run(y)
     child = PChild(train_x,train_y)
     child.model(iteration = 1)
