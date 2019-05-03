@@ -18,7 +18,7 @@ class normal():
 class RandomInit(normal):
     def __init__(self):
         print("----------------------------------------------------")
-        print("###### random generation initiated version 2.0######")
+        print("###### random generation initiated version 2.0 ######")
         print("----------------------------------------------------")
 
     def neuro_rnd_init(self, rand_num):

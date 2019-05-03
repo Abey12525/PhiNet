@@ -44,32 +44,7 @@ class test:
                 mask.append(tmp3)
             self.Lout = tf.get_variable("Lout3",shape = [10], initializer = tf.ones_initializer())
             self.wout = tf.get_variable("wout3",shape = [10,self.neurons[-1]])
-        init = tf.global_variables_initializer()
-        with tf.Session() as sess:
-            sess.run(init)
-            self.weights = sess.run(w)
-            self.layers = sess.run(layer)
-        self.mask = mask
-        print("++++++++++++++init++++++++++++++")
 
-
-    def train(self):
-        print("__train__")
-        with tf.variable_scope("train",reuse = tf.AUTO_REUSE):
-            test = tf.get_variable("inittest",shape = (784),initializer = tf.contrib.layers.xavier_initializer())
-        mask_t = tf.cast(self.mask[0],dtype=tf.float32)
-        actual_layer = tf.multiply(self.winp,test)
-        self.Linp = actual_layer
-        #actual_layer = tf.matmul(self.Linp,mask_t)
-
-        init = tf.global_variables_initializer()
-        with tf.Session() as sess:
-            sess.run(init)
-            #y = sess.run(actual_layer)
-            #t = sess.run(mask_t)
-            tm = sess.run(self.Linp)
-            #wi = sess.run(self.winp)
-            print(np.shape(tm))
 if __name__ == '__main__':
     (train_x,train_y),(test_x,test_y) = mnist.load_data()
     t = test(train_x,test_y)

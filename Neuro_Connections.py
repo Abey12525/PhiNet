@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
 
 
-
+# tensorboard --logdir ./path/ --port 7664
 #     try:
 #         layers = np.load('./layers.npy')
 #         Neurons = np.load('./neurons.npy')

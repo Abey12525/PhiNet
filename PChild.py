@@ -71,42 +71,44 @@ class PChild():
         """Initializing the child network"""
         weights = []
         layers = []
+        layers2 = []
         bias = []
         mask = []
         count = 0
 
         # Input layer and Input weights
-        self.Linp = tf.get_variable("Linp",shape = out,initializer = tf.ones_initializer)
-        self.Winp = tf.get_variable("Winp",shape = [out,self.neurons[0]],
-                                    initializer = tf.contrib.layers.xavier_initializer())
-        self.Binp = tf.get_variable("Binp",shape = [1], initializer=tf.contrib.layers.xavier_initializer())
+        with tf.variable_scope("cache",reuse=tf.AUTO_REUSE):
+            self.Linp = tf.get_variable("Linp",shape = out,initializer = tf.ones_initializer)
+            self.Winp = tf.get_variable("Winp",shape = [out,self.neurons[0]],
+                                        initializer = tf.contrib.layers.xavier_initializer())
+            self.Binp = tf.get_variable("Binp",shape = [1], initializer=tf.contrib.layers.xavier_initializer())
 
-        for i, Neurons in enumerate(self.neurons):
-            vars()["w{}".format(i)] = tf.get_variable("W{}".format(i), shape=[Neurons,self.neuron_num],
-                                                      initializer=tf.contrib.layers.xavier_initializer())
-            vars()["b{}".format(i)] = tf.get_variable("b{}".format(i), shape=[1],
-                                                      initializer = tf.contrib.layers.xavier_initializer())
-            vars()["L{}".format(i)] = tf.get_variable("L{}".format(i),shape = [Neurons],
-                                                      initializer= tf.ones_initializer)
-            vars()["wm{}".format(i)] = self.neuron_mask[count:count+Neurons]
-            count += Neurons
-            W_str = "w{}".format(i)
-            W_tmp = eval(W_str)
-            L_str = "L{}".format(i)
-            L_tmp = eval(L_str)
-            B_str = "b{}".format(i)
-            B_tmp = eval(B_str)
-            WM_str = "wm{}".format(i)
-            WM_tmp = eval(WM_str)
-            weights.append(W_tmp)
-            layers.append(L_tmp)
-            bias.append(B_tmp)
-            mask.append(WM_tmp)
+            for i, Neurons in enumerate(self.neurons):
+                vars()["w{}".format(i)] = tf.get_variable("W{}".format(i), shape=[Neurons,self.neuron_num],
+                                                          initializer=tf.contrib.layers.xavier_initializer())
+                vars()["b{}".format(i)] = tf.get_variable("b{}".format(i), shape=[1],
+                                                          initializer = tf.contrib.layers.xavier_initializer())
+                vars()["L{}".format(i)] = tf.get_variable("L{}".format(i),shape = [Neurons],
+                                                          initializer= tf.ones_initializer)
+                vars()["wm{}".format(i)] = self.neuron_mask[count:count+Neurons]
+                count += Neurons
+                W_str = "w{}".format(i)
+                W_tmp = eval(W_str)
+                L_str = "L{}".format(i)
+                L_tmp = eval(L_str)
+                B_str = "b{}".format(i)
+                B_tmp = eval(B_str)
+                WM_str = "wm{}".format(i)
+                WM_tmp = eval(WM_str)
+                weights.append(W_tmp)
+                layers.append(L_tmp)
+                bias.append(B_tmp)
+                mask.append(WM_tmp)
 
-        self.Lout = tf.get_variable("Lout", shape = out_y,initializer = tf.ones_initializer)
-        self.Wout = tf.get_variable("Wout", shape = [self.neurons[-1],out_y],
-                                    initializer = tf.contrib.layers.xavier_initializer())
-        self.Bout = tf.get_variable("Bout", shape = [1],initializer=tf.contrib.layers.xavier_initializer())
+            self.Lout = tf.get_variable("Lout", shape = out_y,initializer = tf.ones_initializer)
+            self.Wout = tf.get_variable("Wout", shape = [self.neurons[-1],out_y],
+                                        initializer = tf.contrib.layers.xavier_initializer())
+            self.Bout = tf.get_variable("Bout", shape = [1],initializer=tf.contrib.layers.xavier_initializer())
         self.init = tf.global_variables_initializer()
         with tf.Session() as sess:
             sess.run(self.init)
@@ -120,43 +122,45 @@ class PChild():
 
 
     def model(self,iteration,batch_size=500,learning_rate=0.9):
+
         self.iteration = iteration
         self.batch_size = batch_size
         self.total_batch = self.data_len // self.batch_size
         print("total_batch : ",self.total_batch)
-        layer_storage = []
+        """numpy , input batch"""
         self.Linp = tf.matmul(self.x_inp,self.Winp)
-        #self.layers[0] = tf.nn.tanh(tf.add(self.Linp, self.Binp))[0]
+        self.layers[0] = tf.nn.tanh(tf.add(self.Linp, self.Binp))[0]
         for lyr in range(self.no_layers):
             self.mask[lyr] = tf.cast(self.mask[lyr],dtype = tf.float32)
-            actual_weights = tf.multiply(self.weights[lyr],self.mask[lyr])   #correct
-            layer = tf.concat(self.layers,0)   #concat all layers into one
-            actual_layer = tf.multiply(self.mask[lyr], layer)  #correct
-            actual_layer_inp = tf.multiply(actual_weights,actual_layer)#check multiplication
+            actual_weights = tf.multiply(self.weights[lyr],self.mask[lyr])      #correct
+            layer = np.concatenate(self.layers,0)                               #concat all layers into one
+            actual_layer = tf.multiply(self.mask[lyr], layer)                   #correct
+            actual_layer_inp = tf.multiply(actual_weights,actual_layer)         #check multiplication
             actual_layer_inp = tf.reduce_sum(actual_layer_inp,1)
-            #layer_storage.append(actual_layer)
-            layer_result = tf.add(actual_layer_inp,self.bias[lyr]) #correct
+            layer_result = tf.add(actual_layer_inp,self.bias[lyr])              #correct
             self.layers[lyr] = tf.nn.tanh(layer_result)
-        self.Lout = tf.matmul([self.layers[-1]],self.Wout)
-        self.Lout = tf.nn.softmax(tf.add(self.Lout,self.Bout))
+            if lyr == (self.no_layers-1):
+                result = self.layers[lyr]
+                for i in range(self.no_layers):
+                    self.layers[i] = np.ones([self.neurons[i]])
+        self.Lout = layer
+        # self.Lout = tf.matmul([result],self.Wout)
+        # self.Lout = tf.nn.softmax(tf.add(self.Lout,self.Bout))
         with tf.Session() as sess:
+            writer = tf.summary.FileWriter(logdir='./PNet',
+                                           graph=sess.graph)
             sess.run(self.init)
             for i in range(self.iteration):
                 count = 0
                 for batch in range(self.total_batch):
                     count_lt = count + self.batch_size
                     for data_idx in range(count,count_lt):
-                        deepinp = sess.run(tf.convert_to_tensor(self.train_x[data_idx]
-                                                                ,dtype=tf.float32))
-                        final_layer = sess.run(t,feed_dict={self.x_inp : [deepinp]})
-                        print(np.shape(final_layer))
-                        break
-                    batch += 1
+                        final_layer = sess.run(self.Lout,feed_dict={self.x_inp : [train_x[data_idx]]})
+                        print(final_layer)
                     break
-
     def test_accuracy(self):
         #test accuray using the weights saved
-        np.save('./accuracy.npy')
+        np.save('./accuracy.npy',self.accuracy)
 
 
 
