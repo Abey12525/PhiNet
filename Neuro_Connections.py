@@ -1,6 +1,7 @@
 import InitRand
 import tensorflow as tf
 import numpy as np
+import Neuron_network as nn
 """
 SoftC
 used to initialize n number of variables according to the prediction 
@@ -72,17 +73,18 @@ class Dense():
             Neurons = np.load('./neurons.npy')
             print(layers)
             print(Neurons)
+            Dynamic = InitRand.RandomInit()
+            Neuron_number = np.sum(Neurons)
+            print(Neuron_number)
+            Neurons = Neurons.astype(int)
+            Connections = self.Soft_train(Neurons, Neuron_number)
+            np.save('./mask.npy', Connections)
+            print("Save Complete !!")
+
         except:
             print("Error reading File --- !!!!")
 
-        Dynamic = InitRand.RandomInit()
-        Neuron_number = np.sum(Neurons)
-        print(Neuron_number)
-        Neurons = Neurons.astype(int)
-        Connections = self.Soft_train(Neurons, Neuron_number)
-        np.save('./mask.npy', Connections)
-        print("Save Complete !!")
-        
+
 
 if __name__ == "__main__":
     Ta = Dense()

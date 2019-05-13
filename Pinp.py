@@ -86,14 +86,12 @@ class ChModel:
         print("initialization")
 
     def model(self):
+        print("Model Creation")
         x_inp = tf.placeholder(tf.float32, self.shape_x)
         y_inp = self.y_inp = tf.placeholder(tf.float32, self.shape_y)
         ly_r = tf.placeholder(tf.float32,[None,self.neurons[-1]])
         va = tf.matmul(x_inp,self.Winp)
         va = tf.nn.tanh(tf.add(va,self.Binp))
-        res = tf.matmul(ly_r,self.Wout)
-        res = tf.add(res,self.Bout)
-        res = tf.argmax(res,axis=1)
         init = tf.global_variables_initializer()
         self.processed_inp = []
         # layers = []
@@ -105,9 +103,11 @@ class ChModel:
                 var = sess.run(va, feed_dict={x_inp : [x]})
                 self.processed_inp.append(var)
         lyr_xcpy = []
+        test_shls = tf.placeholder(tf.float32,shape=[])
         ly_r = tf.placeholder(tf.float32,shape=[None,self.neurons[-1]])
         res = tf.matmul(ly_r, self.Wout)
         res = tf.add(res, self.Bout)
+        res = tf.nn.softmax(res)
         for i,p_inp in enumerate(self.processed_inp):
             # lyr_cpy = self.layers
             flag = True
@@ -119,7 +119,6 @@ class ChModel:
             with tf.Session() as sess:
                 sess.run(tf.global_variables_initializer())
                 for lyr in range(self.no_layers):
-                    #self.mask[lyr] = tf.cast(self.mask[lyr], dtype=tf.float32)
                     actual_weights = sess.run(tf.multiply(self.weights[lyr], self.mask[lyr]))  # correct
                     actual_layer = sess.run(tf.multiply(self.mask[lyr], lyr_i)) # correct
                     actual_layer_inp = sess.run(tf.multiply(actual_weights, actual_layer))  # check multiplication
@@ -136,21 +135,8 @@ class ChModel:
                         print("##########################")
                 result = sess.run(res,feed_dict={ly_r : [layer_result]})
                 print(result)
+                print(np.argmax(result))
                 sess.close()
-
-            # flag = False
-            # for lyr in range(self.no_layers):
-            #     if flag == False:
-            #         lyr_i = []
-            #         for li, nn in enumerate(self.neurons):
-            #             l = np.ones(nn)
-            #             lyr_i = np.append(lyr_i, l)
-            #         lyr_i[:(self.neurons[0])] = p_inp
-            #     if lyr == self.no_layers-1:
-            #         lyr_xcpy.append(lyr_i)
-            #     flag = True
-        # print(lyr_xcpy)
-        # np.save('./pro_lyr.npy',lyr_xcpy)
 
 
 if __name__ == '__main__':
