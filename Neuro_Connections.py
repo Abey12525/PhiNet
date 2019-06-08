@@ -58,7 +58,7 @@ class Dense():
                  for elem in range(num_ne):
                     layer_out_connection  = sess.run(model, feed_dict={x: [[elem]]})
                     mean = np.divide(np.sum(layer_out_connection),output_layer)
-                    layer_out_connection = np.where(layer_out_connection >=(mean+(mean*0.04)),1,0)
+                    layer_out_connection = np.where(layer_out_connection >=(mean+(mean*0.004)),1,0)
                     connection_matrix.append(layer_out_connection[0])
                     if(elem%200==0):
                         sys.stdout.write("#")
@@ -67,28 +67,32 @@ class Dense():
         print(np.shape(connection_matrix))
         return connection_matrix
 
-    def run(self):
-        try:
-            layers = np.load('./layers.npy')
-            Neurons = np.load('./neurons.npy')
-            print(layers)
-            print(Neurons)
-            Dynamic = InitRand.RandomInit()
-            Neuron_number = np.sum(Neurons)
-            print(Neuron_number)
-            Neurons = Neurons.astype(int)
-            Connections = self.Soft_train(Neurons, Neuron_number)
-            np.save('./mask.npy', Connections)
-            print("Save Complete !!")
-
-        except:
-            print("Error reading File --- !!!!")
+def run():
+    try:
+        layers = np.load('./layers.npy')
+        Neurons = np.load('./neurons.npy')
+        print(layers)
+        print(Neurons)
+    except:
+        print("Error reading File --- !!!!")
+        nn.run()
+        layers = np.load('./layers.npy')
+        Neurons = np.load('./neurons.npy')
+        print("test phase 3 ")
+    Neuron_number = np.sum(Neurons)
+    print(Neuron_number)
+    Neurons = Neurons.astype(int)
+    SoftNet = Dense()
+    Connections = SoftNet.Soft_train(Neurons, Neuron_number)
+    np.save('./mask.npy', Connections)
+    print("Save Complete !!")
+    return Connections
 
 
 
 if __name__ == "__main__":
-    Ta = Dense()
-    Ta.run()
+    connection = run()
+    print(connection)
     print(" Neuro_connection found ")
 
 

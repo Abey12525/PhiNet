@@ -42,83 +42,90 @@ class Layer():
         output4,state4 = Culstm3(output3,initial_state = state3, training = True)
         linear = tf.add(tf.matmul(tf.transpose(output4[-1]),linear_layer0),linear_bias0)
         output = tf.argmax(tf.add(tf.matmul(linear,linear_layer),linear_bias))
-        #output shape = 1 !! I think
-
         #optimizer = tf.train.GradientDescentOptimizer(output).minimize(-self.reward)
+        #output shape = 1 !!
+
         init = tf.global_variables_initializer()
         with tf.Session() as sess:
             timestr = time.strftime("%Y%m%d-%H%M%S")
             Writer = tf.summary.FileWriter(logdir='./graphs/G{}/'.format(timestr), graph=sess.graph)
             sess.run(init)
-            output = sess.run(output,feed_dict={x : self.inp})
-            print(output)
-        return output
+            output = sess.run(output,feed_dict={x : [self.inp]})
+        return output+1
 
-    # def run(self):
-    #     """
-    #         'inr' is used to initialize a random reward , random number of layers and
-    #         random number of neurons in each layers
-    #         """
-    #     try:
-    #         """Checking if file exist or not"""
-    #         neuron_num = np.load('./layers.npy')
-    #         re = np.load('./reward.npy')
-    #         neuron_num = neuron_num[0]
-    #         re = re[0]
-    #         neuron_num.append(re)
-    #         shape = neuron_num.shape[0]
-    #     except:
-    #         print("Structure Not Found !!")
-    #         print("NOTE: initialized or file not written in the correct format")
-    #     else:
-    #         # initializing RandomInit class
-    #         rand_init = inr.RandomInit()
-    #         # initializing Random Reward --> eg : 10
-    #         re = rand_init.rnn_reward_rnd_init()
-    #         # initializing Random number of layers and neuron in each layers --> eg : [250,200,100]
-    #         layers, neuron_num = rand_init.neuro_rnd_init(np.random.randint(10, 20))
-    #         # appending reward to the list of number of neurons in each layers --> eg: [250,200,100,10]
-    #         neuron_num.append(re)
-    #         # converting to numpy array
-    #         neuron_num = np.array(neuron_num)
-    #         # tf.set_random_seed(10)
-    #         shape = neuron_num.shape[0]
-    #     """
-    #     initializing the lstm model
-    #     passing neuron_num as 3D array since CudnnLSTM is time major
-    #     """
-    #     # lstm_output   - Output of the Model
-    #     # lstm_state    - State of the Model
-    #     lstm_output = np.round(self.Model())
-    #     np.save('./layers', lstm_output)
-    #     print(lstm_output)
-
-
-if __name__=='__main__':
+def run(inp_x = None,shape = None):
     """
-    'inr' is used to initialize a random reward , random number of layers and
-    random number of neurons in each layers
-    """
-
-    #initializing RandomInit class
-    rand_init = inr.RandomInit()
-    #initializing Random Reward --> eg : 10
-    re = rand_init.rnn_reward_rnd_init()
-    #initializing Random number of layers and neuron in each layers --> eg : [250,200,100]
-    layers, neuron_num = rand_init.neuro_rnd_init(np.random.randint(10, 20))
-    #appending reward to the list of number of neurons in each layers --> eg: [250,200,100,10]
-    neuron_num.append(re)
-    #converting to numpy array
-    neuron_num = np.array(neuron_num)
-    #tf.set_random_seed(10)
-    shape = neuron_num.shape[0]
+        'inr' is used to initialize a random reward , random number of layers and
+        random number of neurons in each layers
+        """
+    try:
+        """Checking if file exist or not"""
+        neuron_num = np.load('./layers.npy')
+        re = np.load('./reward.npy')
+        neuron_num = neuron_num[0]
+        print(re)
+        re = re[0]
+        neuron_num.append(re)
+        shape = neuron_num.shape[0]
+    except:
+        print("Structure Not Found !!")
+        print("NOTE: not initialized or file not written in the correct format")
+        # initializing RandomInit class
+        rand_init = inr.RandomInit()
+        # initializing Random Reward --> eg : 10
+        re = rand_init.rnn_reward_rnd_init()
+        np.save('./reward.npy',re)
+        # initializing Random number of layers and neuron in each layers --> eg : [250,200,100]
+        layers, neuron_num = rand_init.neuro_rnd_init(np.random.randint(3, 10))
+        # appending reward to the list of number of neurons in each layers --> eg: [250,200,100,10]
+        #neuron_num=np.append(neuron_num,re)
+        # converting to numpy array
+        #neuron_num = np.array(neuron_num)
+        # tf.set_random_seed(10)
+        shape = neuron_num.shape[0]
+    print("testing phase 2")
+    print(shape)
+    print(neuron_num)
     """
     initializing the lstm model
     passing neuron_num as 3D array since CudnnLSTM is time major
     """
-    lstm = Layer([[neuron_num]],shape)
     # lstm_output   - Output of the Model
     # lstm_state    - State of the Model
-    lstm_output=np.round(lstm.Model())
-    np.save('./layers',lstm_output)
+    sl = Layer([neuron_num],shape)
+    lstm_output = np.round(sl.Model())
+    np.save('./layers', lstm_output)
     print(lstm_output)
+
+
+# if __name__=='__main__':
+#     """
+#     'inr' is used to initialize a random reward , random number of layers and
+#     random number of neurons in each layers
+#     """
+#     lr = Layer()
+#     lr.run()
+#     print("trial run")
+
+    # #initializing RandomInit class
+    # rand_init = inr.RandomInit()
+    # #initializing Random Reward --> eg : 10
+    # re = rand_init.rnn_reward_rnd_init()
+    # #initializing Random number of layers and neuron in each layers --> eg : [250,200,100]
+    # layers, neuron_num = rand_init.neuro_rnd_init(np.random.randint(10, 20))
+    # #appending reward to the list of number of neurons in each layers --> eg: [250,200,100,10]
+    # neuron_num.append(re)
+    # #converting to numpy array
+    # neuron_num = np.array(neuron_num)
+    # #tf.set_random_seed(10)
+    # shape = neuron_num.shape[0]
+    # """
+    # initializing the lstm model
+    # passing neuron_num as 3D array since CudnnLSTM is time major
+    # """
+    # lstm = Layer([[neuron_num]],shape)
+    # # lstm_output   - Output of the Model
+    # # lstm_state    - State of the Model
+    # lstm_output=np.round(lstm.Model())
+    # np.save('./layers',lstm_output)
+    # print(lstm_output)

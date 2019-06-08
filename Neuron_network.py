@@ -31,29 +31,29 @@ class Neurons():
             sess.run(init)
             output = sess.run(output,feed_dict={x : self.inp})
         return output
-    def run(self):
-        try:
-            foo = np.load('./layers.npy')
-            print(foo)
-        except:
-            print("File not Found -- !!")
-        else:
-            ly = LNet.Layer()
-            ly.run()
-            foo = np.load('./layers.npy')
-            print(foo)
-        Neu = Neurons(int(foo))
-        out = Neu.Model()
-        np.save('./neurons', out)
-        print(out)
-
-if __name__ == '__main__':
+def run():
     try:
         foo = np.load('./layers.npy')
         print(foo)
     except:
         print("File not Found -- !!")
+        ly = LNet.Layer()
+        LNet.run()
+        foo = np.load('./layers.npy')
+        print(foo)
     Neu = Neurons(int(foo))
     out = Neu.Model()
-    np.save('./neurons',out)
+    np.save('./neurons', out)
     print(out)
+
+if __name__ == '__main__':
+    run()
+    # try:
+    #     foo = np.load('./layers.npy')
+    #     print(foo)
+    # except:
+    #     print("File not Found -- !!")
+    # Neu = Neurons(int(foo))
+    # out = Neu.Model()
+    # np.save('./neurons',out)
+    # print(out)

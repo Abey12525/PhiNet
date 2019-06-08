@@ -27,20 +27,26 @@ class RandomInit(normal):
         self.n = rand_num
         tf.reset_default_graph()
         #vars()["b"]=tf.get_variable("b",shape=[self.n],initializer=tf.contrib.layers.xavier_initializer())
-        for i in range(self.n):
-            self.init_shape = rnd.randint(256, 1024)
-            self.No_of_neurons.append(self.init_shape)
+        self.no_of_neurons = np.random.randint(256,1024,(self.n+1))
+        print("+++++++")
+        print(self.no_of_neurons)
+        print("+++++++")
+        for i,elem in enumerate(self.no_of_neurons):
+            # self.init_shape = rnd.randint(256, 1024)
+            # self.No_of_neurons.append(self.init_shape)
             #initializing variables with ordered name ie. v1,v2,...vn
             ##vars()["v".format(i)] is used so that a variable
             ##name can be declared with in the loop
-            vars()["v{}".format(i)] = tf.get_variable("v{}".format(i), shape=[self.init_shape],
+            vars()["v{}".format(i)] = tf.get_variable("v{}".format(i), shape=[elem],
                                                       initializer=tf.contrib.layers.xavier_initializer())
             #geting the variable by the string name so that it is automaticaly
             #appended to the list of dynamicaly created variables
             str_v ="v{}".format(i)
             tmp = eval(str_v)
-            self.vlist.append([tmp,self.init_shape])
-        return self.vlist,self.No_of_neurons
+            self.vlist.append([tmp,elem])
+        print(self.vlist)
+        print("++++++")
+        return self.vlist,self.no_of_neurons
 
     def rnn_reward_rnd_init(self):
         """reward is normalized -5 to 5
@@ -54,6 +60,7 @@ class RandomInit(normal):
         #     re = self.norm(reward)
         # print(re)
         reward = np.random.randint(50, 100)
+        np.save('./reward.npy',reward)
         return self.norm(reward)
 
 
