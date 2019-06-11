@@ -98,23 +98,3 @@ if __name__ == "__main__":
 
 
 
-# tensorboard --logdir ./path/ --port 7664
-#     try:
-#         layers = np.load('./layers.npy')
-#         Neurons = np.load('./neurons.npy')
-#         print(layers)
-#         print(Neurons)
-#     except:
-#         print("Error reading File --- !!!!")
-#
-#
-#     Dynamic = InitRand.RandomInit()
-#     # function for variable generation
-#     # tf.reset_default_graph()
-#     Neuron_number = np.sum(Neurons)
-#     print(Neuron_number)
-#     SoftNet = Dense()
-#     Neurons = Neurons.astype(int)
-#     Connections = SoftNet.Soft_train(Neurons,Neuron_number)
-#     np.save('./mask.npy',Connections)
-#     print("Save Complete !!")

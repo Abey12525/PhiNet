@@ -17,9 +17,9 @@ class normal():
 
 class RandomInit(normal):
     def __init__(self):
-        print("----------------------------------------------------")
-        print("###### random generation initiated version 2.0 ######")
-        print("----------------------------------------------------")
+        print("-----------------------------------------")
+        print("###### random generation initiated ######")
+        print("-----------------------------------------")
 
     def neuro_rnd_init(self, rand_num):
         self.vlist = []
@@ -29,7 +29,7 @@ class RandomInit(normal):
         #vars()["b"]=tf.get_variable("b",shape=[self.n],initializer=tf.contrib.layers.xavier_initializer())
         self.no_of_neurons = np.random.randint(256,1024,(self.n+1))
         print("+++++++")
-        print(self.no_of_neurons)
+        print("Sample Number of neurons per layer",self.no_of_neurons)
         print("+++++++")
         for i,elem in enumerate(self.no_of_neurons):
             # self.init_shape = rnd.randint(256, 1024)
@@ -44,7 +44,7 @@ class RandomInit(normal):
             str_v ="v{}".format(i)
             tmp = eval(str_v)
             self.vlist.append([tmp,elem])
-        print(self.vlist)
+        print("variable created :",self.vlist)
         print("++++++")
         return self.vlist,self.no_of_neurons
 
@@ -63,70 +63,9 @@ class RandomInit(normal):
         np.save('./reward.npy',reward)
         return self.norm(reward)
 
+if __name__ == '__main__':
+    test_gen = RandomInit()
+    vlist,no_of_neurons = test_gen.neuro_rnd_init(np.random.randint(3,8))
 
-"""
-class MyClass(object):
-    @staticmethod
-    def the_static_method(x):
-        print x
 
-MyClass.the_static_method(2) # outputs 2
-"""
-"""
-sess = tf.InteractiveSession()
-a = tf.constant(5.0)
-b = tf.constant(6.0)
-c = a * b
-# We can just use 'c.eval()' without passing 'sess'
-print(c.eval())
-sess.close()
-"""
-#v = SoftCinit()
-#lst,shp= v.rnd_init()
-#print(lst)
-#print(shp)
-#layers = Dense(lst,shp)
 
-# l = len(lst)
-# for i in range(l):
-#     print(shp[i])
-#
-# """
-#  vars()["variable_{}".format("name")] = i
-#  >>> string = "blah"
-# >>> string
-# 'blah'
-# >>> x = "string"
-# >>> eval(x)
-# 'blah'
-#  """
-#
-# # #np.save('Indx.npy',[2,3,4])
-# # t = np.load('Indx.npy')
-# # #x = np.arange(10)
-# # #np.save('Indx.npy',np.append(t,x))
-# # print(t)
-#
-# # Create some variables.
-# v1 = tf.get_variable("v{}".format(10), shape=[3], initializer=tf.zeros_initializer)
-# v2 = tf.get_variable("v2", shape=[5], initializer=tf.zeros_initializer)
-#
-# inc_v1 = v1.assign(v1 + 1)
-# dec_v2 = v2.assign(v2 - 1)
-#
-# # Add an op to initialize the variables.
-# init_op = tf.global_variables_initializer()
-#
-# # Add ops to save and restore all the variables.
-# saver = tf.train.Saver()
-#
-# # Later, launch the model, initialize the variables, do some work, and save the
-# # variables to disk.
-# with tf.Session() as sess:
-#     sess.run(init_op)
-#     # Do some work with the model.
-#     inc_v1.op.run()
-#     dec_v2.op.run()
-#     # Save the variables to disk.
-#     save_path = saver.save(sess, "/tmp/model.ckpt")
-#     print("Model saved in path: %s" % save_path)

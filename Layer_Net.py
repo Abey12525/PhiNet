@@ -83,9 +83,9 @@ def run(inp_x = None,shape = None):
         #neuron_num = np.array(neuron_num)
         # tf.set_random_seed(10)
         shape = neuron_num.shape[0]
-    print("testing phase 2")
-    print(shape)
-    print(neuron_num)
+    print("__________________")
+    print("shape :",shape)
+    print("neuron_num :",neuron_num)
     """
     initializing the lstm model
     passing neuron_num as 3D array since CudnnLSTM is time major
@@ -97,35 +97,7 @@ def run(inp_x = None,shape = None):
     np.save('./layers', lstm_output)
     print(lstm_output)
 
+if __name__ == '__main__':
+    run()
 
-# if __name__=='__main__':
-#     """
-#     'inr' is used to initialize a random reward , random number of layers and
-#     random number of neurons in each layers
-#     """
-#     lr = Layer()
-#     lr.run()
-#     print("trial run")
 
-    # #initializing RandomInit class
-    # rand_init = inr.RandomInit()
-    # #initializing Random Reward --> eg : 10
-    # re = rand_init.rnn_reward_rnd_init()
-    # #initializing Random number of layers and neuron in each layers --> eg : [250,200,100]
-    # layers, neuron_num = rand_init.neuro_rnd_init(np.random.randint(10, 20))
-    # #appending reward to the list of number of neurons in each layers --> eg: [250,200,100,10]
-    # neuron_num.append(re)
-    # #converting to numpy array
-    # neuron_num = np.array(neuron_num)
-    # #tf.set_random_seed(10)
-    # shape = neuron_num.shape[0]
-    # """
-    # initializing the lstm model
-    # passing neuron_num as 3D array since CudnnLSTM is time major
-    # """
-    # lstm = Layer([[neuron_num]],shape)
-    # # lstm_output   - Output of the Model
-    # # lstm_state    - State of the Model
-    # lstm_output=np.round(lstm.Model())
-    # np.save('./layers',lstm_output)
-    # print(lstm_output)

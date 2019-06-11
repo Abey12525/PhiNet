@@ -50,10 +50,14 @@ class ChModel:
         bias = []
         mask = []
         layer = []
+        rweights = []
+        rbias = []
         self.Linp = tf.get_variable("Linp", shape=out, initializer=tf.ones_initializer)
         self.Winp = tf.get_variable("Winp", shape=[out, self.neurons[0]],
                                     initializer=tf.contrib.layers.xavier_initializer())
         self.Binp = tf.get_variable("Binp", shape=[1], initializer=tf.contrib.layers.xavier_initializer())
+        # rweights.append(("Winp", self.Winp))
+        # rbias.append(("Binp", self.Binp))
 
         count = 0
         for i, Neurons in enumerate(self.neurons):
@@ -73,15 +77,21 @@ class ChModel:
             WM_str = "wm{}".format(i)
             WM_tmp = eval(WM_str)
             weights.append((i, W_tmp))
+            # rweights.append(("w{}".format(i),eval(WM_str)))
+            # rbias.append(("b{}".format(i),eval(B_str)))
             bias.append((i, B_tmp))
             mask.append(WM_tmp)
 
         self.Wout = tf.get_variable("Wout", shape=[self.neurons[-1], out_y],
                                     initializer=tf.contrib.layers.xavier_initializer())
         self.Bout = tf.get_variable("Bout", shape=[1], initializer=tf.contrib.layers.xavier_initializer())
+        # rweights.append(("Wout", self.Wout))
+        # rbias.append(("Bout", self.Bout))
         self.init = tf.global_variables_initializer()
         self.weights = dict(weights)
         self.bias = dict(bias)
+        # self.rweights = dict(rweights)
+        # self.rbias = dict(rbias)
         self.mask = mask
         print("initialization")
 
@@ -111,13 +121,16 @@ class ChModel:
         for i,p_inp in enumerate(self.processed_inp):
             # lyr_cpy = self.layers
             flag = True
+            Rflag = False
             lyr_i = []
             for li, nn in enumerate(self.neurons):
                 l = np.ones(nn)
                 lyr_i = np.append(lyr_i, l)
             lyr_i[:(self.neurons[0])] = p_inp
             with tf.Session() as sess:
-                sess.run(tf.global_variables_initializer())
+                writer = tf.summary.FileWriter(logdir='./NAS/Models',
+                                               graph=sess.graph)
+                sess.run(init)
                 for lyr in range(self.no_layers):
                     actual_weights = sess.run(tf.multiply(self.weights[lyr], self.mask[lyr]))  # correct
                     actual_layer = sess.run(tf.multiply(self.mask[lyr], lyr_i)) # correct
@@ -130,13 +143,14 @@ class ChModel:
                         lyr_i[:self.neurons[lyr]] = layer_result
                     else:
                         lyr_i[sum(self.neurons[:lyr]):sum(self.neurons[:lyr+1])]= layer_result
-                        print(sum(self.neurons[:lyr-1]))
-                        print(sum(self.neurons[:lyr]))
-                        print("##########################")
                 result = sess.run(res,feed_dict={ly_r : [layer_result]})
+                # loss
+                # accuracy
                 print(result)
                 print(np.argmax(result))
                 sess.close()
+            if i == 1:
+                break
 
 
 if __name__ == '__main__':

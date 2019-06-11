@@ -28,6 +28,8 @@ class Neurons():
 
         init = tf.global_variables_initializer()
         with tf.Session() as sess:
+            writer = tf.summary.FileWriter(logdir='./Neuron_graph',
+                                           graph=sess.graph)
             sess.run(init)
             output = sess.run(output,feed_dict={x : self.inp})
         return output
@@ -48,12 +50,3 @@ def run():
 
 if __name__ == '__main__':
     run()
-    # try:
-    #     foo = np.load('./layers.npy')
-    #     print(foo)
-    # except:
-    #     print("File not Found -- !!")
-    # Neu = Neurons(int(foo))
-    # out = Neu.Model()
-    # np.save('./neurons',out)
-    # print(out)
