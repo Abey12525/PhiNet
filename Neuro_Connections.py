@@ -17,6 +17,9 @@ __init__(
     **kwargs
 )
 """
+
+
+"""testing python commit"""
 class Dense():
     def Soft_train(self,InArr,output_layer,iteration = 1):
         connection_matrix = []
