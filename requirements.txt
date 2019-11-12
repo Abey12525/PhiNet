@@ -1,0 +1,6 @@
+~ensorflow_gpu==1.10.0
+numpy==1.14.5
+matplotlib==2.1.0
+protobuf==3.10.0
+scikit_learn==0.21.3
+tensorflow==2.0.0
